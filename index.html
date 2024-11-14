@@ -1,0 +1,243 @@
+<DOCTYPE html> 
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Task number 8</title>
+        <link rel="stylesheet" href="DefaultTask8.css"> 
+    </head>
+    <body class="default">
+<div class="text"> Задача 8</div>
+        <table class="table"> 
+          <tr>
+              <td>
+              <p class="text2">
+                  Код программы: </br>
+Файл DoublyLinkedListGUI.java </br>
+class DoublyLinkedList { </br>
+    private Node head; </br>
+    private Node tail; </br>
+
+    private static class Node { </br>
+        int data; </br>
+        Node next; </br>
+        Node prev; </br>
+
+        Node(int data) { </br>
+            this.data = data; </br>
+        } </br>
+    } </br>
+
+    public void initialize() { </br>
+        head = null; </br>
+        tail = null; </br>
+    } </br>
+
+    public void destroy() { </br>
+        head = null; </br>
+        tail = null; </br>
+    } </br>
+
+    public void insertAtEnd(int data) { </br>
+        Node newNode = new Node(data); </br>
+        if (tail == null) { </br>
+            head = tail = newNode; </br>
+        } else { </br>
+            tail.next = newNode; </br>
+            newNode.prev = tail; </br>
+            tail = newNode; </br>
+        } </br>
+    } </br>
+
+    public void insertBefore(int beforeData, int newData) { </br>
+        Node current = head; </br>
+        while (current != null && current.data != beforeData) { </br>
+            current = current.next; </br>
+        } </br>
+        if (current != null) { </br>
+            Node newNode = new Node(newData); </br>
+            newNode.next = current; </br>
+            newNode.prev = current.prev; </br>
+            if (current.prev != null) { </br>
+                current.prev.next = newNode; </br>
+            } else { </br>
+                head = newNode; </br>
+            } </br>
+            current.prev = newNode; </br>
+        } </br>
+    } </br>
+
+    public void delete(int data) { </br>
+        Node current = head; </br>
+        while (current != null && current.data != data) { </br>
+            current = current.next; </br>
+        } </br>
+        if (current != null) { </br>
+            if (current.prev != null) { </br>
+                current.prev.next = current.next; </br>
+            } else { </br>
+                head = current.next; </br>
+            } </br>
+            if (current.next != null) { </br>
+                current.next.prev = current.prev; </br>
+            } else { </br>
+                tail = current.prev; </br>
+            } </br>
+        } </br>
+    } </br>
+
+    public Integer getFirst() { </br>
+        return head != null ? head.data : null; </br>
+    } </br>
+
+    public Integer getLast() { </br>
+        return tail != null ? tail.data : null; </br>
+    } </br>
+
+    public String display() { </br>
+        StringBuilder listContents = new StringBuilder("List: "); </br>
+        Node current = head; </br>
+        while (current != null) { </br>
+            listContents.append(current.data).append(" "); </br>
+            current = current.next; </br>
+        } </br>
+        return listContents.toString(); </br>
+    } </br>
+} </br>
+
+Файл GUI.java </br>
+import javax.swing.*; </br>
+import java.awt.*; </br>
+import java.awt.event.ActionEvent; </br>
+import java.awt.event.ActionListener; </br>
+
+public class GUI extends JFrame { </br>
+    private DoublyLinkedList list = new DoublyLinkedList(); </br>
+    private JTextArea outputArea; </br>
+    private JTextField inputField; </br>
+
+    public GUI() { </br>
+        setTitle("Linked List GUI"); </br>
+        setSize(400, 400); </br>
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); </br>
+
+        outputArea = new JTextArea(); </br>
+        outputArea.setEditable(false); </br>
+        add(new JScrollPane(outputArea), BorderLayout.CENTER); </br>
+
+        JPanel panel = new JPanel(new GridLayout(0, 2, 5, 5)); </br>
+        inputField = new JTextField(); </br>
+        panel.add(inputField); </br>
+
+        JButton initBtn = new JButton("Initialize List"); </br>
+        initBtn.addActionListener(e -> { </br>
+            list.initialize(); </br>
+            displayOutput("List initialized."); </br>
+        }); </br>
+        panel.add(initBtn); </br>
+
+        JButton destroyBtn = new JButton("Destroy List"); </br>
+        destroyBtn.addActionListener(e -> { </br>
+            list.destroy(); </br>
+            displayOutput("List destroyed."); </br>
+        }); </br>
+        panel.add(destroyBtn); </br>
+
+        JButton insertEndBtn = new JButton("Insert at End"); </br>
+        insertEndBtn.addActionListener(e -> { </br> 
+            int value = getInput(); </br>
+            if (value != Integer.MIN_VALUE) { </br>
+                list.insertAtEnd(value); </br>
+                displayOutput("Inserted at end: " + value); </br>
+            } </br>
+        }); </br>
+        panel.add(insertEndBtn); </br>
+
+        JButton insertBeforeBtn = new JButton("Insert Before"); </br>
+        insertBeforeBtn.addActionListener(e -> { </br>
+            String[] parts = inputField.getText().split(","); </br>
+            if (parts.length == 2) { </br>
+                try { </br>
+                    int beforeValue = Integer.parseInt(parts[0].trim()); </br>
+                    int newValue = Integer.parseInt(parts[1].trim()); </br>
+                    list.insertBefore(beforeValue, newValue); </br>
+                    displayOutput("Inserted " + newValue + " before " + beforeValue); </br>
+                } catch (NumberFormatException ex) { </br>
+                    displayOutput("Invalid input. Please enter two integers separated </br>by a comma.");</br>
+                }</br>
+            } else {</br>
+                displayOutput("Please enter two numbers separated by a comma."); </br>
+            }</br>
+        });</br>
+        panel.add(insertBeforeBtn);</br>
+
+        JButton deleteBtn = new JButton("Delete Element"); </br>
+        deleteBtn.addActionListener(e -> { </br>
+            int value = getInput(); </br>
+            if (value != Integer.MIN_VALUE) { </br>
+                list.delete(value); </br>
+                displayOutput("Deleted: " + value); </br>
+            } </br>
+        }); </br>
+        panel.add(deleteBtn); </br>
+
+        JButton getFirstBtn = new JButton("Get First Element"); </br>
+        getFirstBtn.addActionListener(e -> { </br>
+            Integer first = list.getFirst(); </br>
+            displayOutput("First element: " + (first != null ? first : "List is </br> empty")); </br>
+        }); </br>
+        panel.add(getFirstBtn); </br>
+
+        JButton getLastBtn = new JButton("Get Last Element"); </br>
+        getLastBtn.addActionListener(e -> { </br>
+            Integer last = list.getLast(); </br>
+            displayOutput("Last element: " + (last != null ? last : "List is empty")); </br>
+        }); </br>
+        panel.add(getLastBtn); </br>
+
+        JButton displayBtn = new JButton("Display List"); </br>
+        displayBtn.addActionListener(e -> displayOutput(list.display())); </br>
+        panel.add(displayBtn); </br>
+
+        add(panel, BorderLayout.SOUTH); </br>
+    } </br>
+
+    private int getInput() { </br>
+        try { </br>
+            return Integer.parseInt(inputField.getText().trim()); </br>
+        } catch (NumberFormatException ex) { </br>
+            displayOutput("Invalid input. Please enter a number."); </br>
+            return Integer.MIN_VALUE; </br>
+        } </br>
+    } </br>
+
+    private void displayOutput(String message) { </br>
+        outputArea.append(message + "\n"); </br>
+        inputField.setText(""); </br>
+    } </br>
+
+    public static void main(String[] args) { </br>
+        SwingUtilities.invokeLater(() -> new GUI().setVisible(true)); </br>
+    } </br>
+} </br>
+                  </p>
+
+
+          </td>
+          </tr>
+<tr> 
+    <td>
+    <p class="text"> Скриншот результата </p>
+    <img class="img" src="https://github.com/newsadness/Task-number-2/blob/main/2.png?raw=true">
+    </td>
+</tr>
+          <tr>
+             <td> 
+                 <a href="https://newsadness.github.io/1st-week/"> 
+                   <button class="button"> назад </button> 
+                 </a> 
+            </td>
+          </tr>
+        </table> 
+    </body>
+</html>
+</DOCTYPE>
